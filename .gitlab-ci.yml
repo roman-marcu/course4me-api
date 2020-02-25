@@ -1,10 +1,16 @@
 variables:
   APP_NAME: "course4me"
 stages:
-  - Build Artifacts
+  - Build
   - Deploy
 # Add some job in "Build Artifacts" stage to prepare the artifacts to push along with the docker image.
 Deploy to Heroku:
+
+  build:
+    stage: Build
+    script:
+      - mvn clean package
+
   stage: Deploy
   image: docker:stable
   services:

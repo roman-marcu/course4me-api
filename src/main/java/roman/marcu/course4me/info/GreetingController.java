@@ -4,7 +4,6 @@
 package roman.marcu.course4me.info;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GreetingController {
 
     @GetMapping("say-hello")
-    public String sayHello(){
+    public String sayHello() {
         return "Hello World !!!";
     }
 }
