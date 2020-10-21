@@ -11,15 +11,27 @@
     <url>https://github.com/roman-marcu/course4me-api</url>
  
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
         <junit.version>3.8.1</junit.version>
-        <spring.version>4.3.5.RELEASE</spring.version>
 		
 		<guava.version>29.0-jre</guava.version>
+        <jackson.version>2.11.3</jackson.version>
+
+        <spring-boot-starter.version>2.3.4.RELEASE</spring-boot-starter.version>
+        <spring-restdocs-mockmvc.version>1.0.0.RELEASE</spring-restdocs-mockmvc.version>
+
+        <quarkus.version>1.9.0.Final</quarkus.version>
+        <rest-assured.version>4.3.1</rest-assured.version>
 		
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-		<maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
-	
+		<spring-boot-maven-plugin.version>2.3.4.RELEASE</spring-boot-maven-plugin.version>
+        <jacoco.version>0.8.5</jacoco.version>
+
     </properties>
  
     <dependencies>
@@ -31,12 +43,6 @@
             <scope>test</scope>
         </dependency>
          
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-         
     </dependencies>
 	
 	<dependencyManagement>
@@ -46,6 +52,78 @@
 			<artifactId>guava</artifactId>
 			<version>${guava.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+            <version>${spring-boot-starter.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-starter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.restdocs</groupId>
+            <artifactId>spring-restdocs-mockmvc</artifactId>
+            <version>${spring-restdocs-mockmvc.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <!-- quarkus -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jsonb</artifactId>
+            <version>${quarkus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-kubernetes</artifactId>
+            <version>${quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-container-image-jib</artifactId>
+            <version>${quarkus.version}</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+            <version>${quarkus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 	</dependencies>
   </dependencyManagement>
   
@@ -56,37 +134,58 @@
       <artifactId>maven-compiler-plugin</artifactId>
       <version>${maven-compiler-plugin.version}</version>
       <configuration>
-        <source>1.8</source>
-        <target>1.8</target>
+        <source>${maven.compiler.source}</source>
+        <target>${maven.compiler.target}</target>
       </configuration>
     </plugin>
+      <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                  <id>report</id>
+                  <phase>prepare-package</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
   </plugins>
 
   <pluginManagement>
 
     <plugins>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>${maven-assembly-plugin.version}</version>
-        <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptors>
-            <descriptor>src/main/assembly/assembly.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>${spring-boot-maven-plugin.version}</version>
+            <executions>
+                <execution>
+                    <!-- Spring Boot Actuator displays build-related information
+                      if a META-INF/build-info.properties file is present -->
+                    <goals>
+                        <goal>build-info</goal>
+                        <goal>repackage</goal>
+                    </goals>
+                    <configuration>
+                        <additionalProperties>
+                            <encoding.source>${project.build.sourceEncoding}</encoding.source>
+                            <encoding.reporting>${project.reporting.outputEncoding}</encoding.reporting>
+                            <java.source>${maven.compiler.source}</java.source>
+                            <java.target>${maven.compiler.target}</java.target>
+                        </additionalProperties>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
 
   </pluginManagement>
